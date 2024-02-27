@@ -18,7 +18,7 @@ def generate_dates(class_info, start_date, end_date, sort_option):
                     end_hour, end_minute = map(int, end_time.split(':'))
 
                     # Calculate the day of the week based on the provided input
-                    input_day_index = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].index(day)
+                    input_day_index = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday","Saturday"].index(day)
                     target_day_index = (input_day_index - current_date.weekday() + 7) % 7
                     target_date = current_date + timedelta(days=target_day_index)
 
@@ -51,14 +51,36 @@ def main():
     st.header("Enter Class Information:")
     input_count = 0
     while True:
-        class_number = st.text_input(f"Class Number {input_count+1}", key=f"class_number_{input_count}")
+        class_number = st.text_input(f"Class Number {input_count+1} (enter the class Name)", key=f"class_number_{input_count}")
         if not class_number:
             break
 
         working_hours = {}
-        for day in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]:
-            selected_hours = st.multiselect(f"{class_number} - {day} Hours", ["08:00-09:00", "09:00-10:00", "10:00-11:00", "11:00-12:00", "14:00-15:00", "15:00-16:00", "16:00-17:00", "17:00-18:00"], key=f"hours_input_{class_number}_{day}")
-            working_hours[day] = selected_hours
+        s = {}
+        Monday, Tuesday, Wednesday, Thursday, Friday,Saturday= st.columns(6)
+        with Monday:
+            selected_hours = st.multiselect(f"Monday :", ["08:00-09:00", "09:00-10:00", "10:00-11:00", "11:00-12:00", "14:00-15:00", "15:00-16:00", "16:00-17:00", "17:00-18:00"], key=f"hours_input_{class_number}_Monday")
+            working_hours["Monday"] = selected_hours        
+        with Tuesday:
+            selected_hours = st.multiselect(f"Tuesday :", ["08:00-09:00", "09:00-10:00", "10:00-11:00", "11:00-12:00", "14:00-15:00", "15:00-16:00", "16:00-17:00", "17:00-18:00"], key=f"hours_input_{class_number}_Tuesday")
+            working_hours["Tuesday"] = selected_hours 
+        with Wednesday:
+            selected_hours = st.multiselect(f"Wednesday :", ["08:00-09:00", "09:00-10:00", "10:00-11:00", "11:00-12:00", "14:00-15:00", "15:00-16:00", "16:00-17:00", "17:00-18:00"], key=f"hours_input_{class_number}_Wednesday")
+            working_hours["Wednesday"] = selected_hours 
+        with Thursday:
+            selected_hours = st.multiselect(f"Thursday :", ["08:00-09:00", "09:00-10:00", "10:00-11:00", "11:00-12:00", "14:00-15:00", "15:00-16:00", "16:00-17:00", "17:00-18:00"], key=f"hours_input_{class_number}_Thursday")
+            working_hours["Thursday"] = selected_hours 
+        with Friday:
+            selected_hours = st.multiselect(f"Friday :", ["08:00-09:00", "09:00-10:00", "10:00-11:00", "11:00-12:00", "14:00-15:00", "15:00-16:00", "16:00-17:00", "17:00-18:00"], key=f"hours_input_{class_number}_Friday")
+            working_hours["Friday"] = selected_hours 
+        with Saturday:
+            selected_hours = st.multiselect(f"Saturday :", ["08:00-09:00", "09:00-10:00", "10:00-11:00", "11:00-12:00", "14:00-15:00", "15:00-16:00", "16:00-17:00", "17:00-18:00"], key=f"hours_input_{class_number}_Saturday")
+            working_hours["Saturday"] = selected_hours 
+
+
+       
+           
+           
 
         class_info[class_number] = working_hours
         input_count += 1
@@ -67,15 +89,36 @@ def main():
     st.header("Class Information:")
     for class_number, working_hours in class_info.items():
         st.subheader(f"Class {class_number} Working Hours:")
-        for day, selected_hours in working_hours.items():
-            st.write(f"{day}: {selected_hours}")
+        Monday, Tuesday, Wednesday, Thursday, Friday,Saturday= st.columns(6)
+        with Monday:
+            st.write(f"Monday :")
+            st.write(f"{working_hours['Monday']}")
+        with Tuesday:
+            st.write(f"Tuesday :")
+            st.write(f"{working_hours['Tuesday']}")
+        with Wednesday:
+            st.write(f"Wednesday :")
+            st.write(f"{working_hours['Wednesday']}")
+        with Thursday:
+            st.write(f"Thursday :")
+            st.write(f"{working_hours['Thursday']}")
+        with Friday:
+            st.write(f"Friday :")
+            st.write(f"{working_hours['Friday']}")
+        with Saturday:
+            st.write(f"Saturday :")
+            st.write(f"{working_hours['Saturday']}")
+
 
     # Get the starting and ending dates for schedule generation
-    start_date = st.date_input("Starting Date", datetime.now().date())
-    end_date = st.date_input("Ending Date", datetime.now().date())
+    start,end = st.columns(2)
+    with start:
+        start_date = st.date_input("Starting Date", datetime.now().date())
+    with end:
+        end_date = st.date_input("Ending Date", datetime.now().date())
 
     # Choose the sorting options
-    sort_option = st.radio("Sort Schedule By:", ("Date", "Day", "Class"))
+    sort_option = st.radio("Sort Schedule By:", ("Date", "Day", "Class"),horizontal=True)
 
     if st.button("Generate Schedule"):
         # Generate dates based on the class schedules, starting/ending dates, and sorting options
